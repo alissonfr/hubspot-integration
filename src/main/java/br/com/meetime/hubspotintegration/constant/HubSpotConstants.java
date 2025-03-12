@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class HubSpotConstants {
 
+    public static final String HUB_SPOT_CONTENT_TYPE = "application/x-www-form-urlencoded";
     public static final String GRANT_TYPE = "authorization_code";
     public static String BASE_URL;
     public static String OAUTH_PATH;

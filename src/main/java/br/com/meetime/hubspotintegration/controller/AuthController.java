@@ -1,18 +1,14 @@
 package br.com.meetime.hubspotintegration.controller;
 
-import br.com.meetime.hubspotintegration.client.HubSpotClient;
-import br.com.meetime.hubspotintegration.dto.request.HubSpotTokenRequest;
-import br.com.meetime.hubspotintegration.dto.response.HubSpotTokenResponse;
+import br.com.meetime.hubspotintegration.dto.response.AuthTokenResponse;
 import br.com.meetime.hubspotintegration.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Map;
-
-import static br.com.meetime.hubspotintegration.constant.HubSpotConstants.*;
 
 @Slf4j
 @RestController
@@ -28,10 +24,17 @@ public class AuthController {
     }
 
     @GetMapping("/oauth/callback")
-    public ResponseEntity<HubSpotTokenResponse> callback(@RequestParam("code") String code) {
+    public ResponseEntity<AuthTokenResponse> callback(@RequestParam("code") String code) {
         return ResponseEntity.ok(service.getAccessToken(code));
     }
 
+    // EXTRA ROUTE: automatically redirect user to HubSpot OAuth page
+    @GetMapping("/oauth/authorize/login")
+    public ResponseEntity<String> login() {
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .header("Location", service.getOAuthUri())
+                .build();
+    }
 
 
     @PostMapping("/webhook")
