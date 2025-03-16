@@ -6,10 +6,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients(basePackages = "br.com.meetime.hubspotintegration")
-public class HubSpotintegrationApplication {
+public class HubSpotIntegrationApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(HubSpotintegrationApplication.class, args);
+		SpringApplication.run(HubSpotIntegrationApplication.class, args);
 	}
 
 }
