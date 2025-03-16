@@ -3,15 +3,15 @@ package br.com.meetime.hubspotintegration.constant;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.TimeUnit;
 
 @Component
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class HubSpotConstants {
 
+    public static final String RESPONSE_TYPE = "code";
+    public static final String SCOPES = "crm.objects.contacts.write crm.objects.contacts.read " +
+            "crm.schemas.contacts.read crm.schemas.contacts.write oauth";
     public static final String HUB_SPOT_CONTENT_TYPE = "application/x-www-form-urlencoded";
     public static final String GRANT_TYPE = "authorization_code";
     public static String BASE_URL;

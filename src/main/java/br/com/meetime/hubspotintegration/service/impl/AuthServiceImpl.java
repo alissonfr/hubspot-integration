@@ -33,8 +33,8 @@ public class AuthServiceImpl implements AuthService {
             return UriComponentsBuilder.fromUriString(BASE_URL + OAUTH_PATH)
                     .queryParam("client_id", CLIENT_ID)
                     .queryParam("redirect_uri", REDIRECT_URI)
-                    .queryParam("scope", "crm.objects.contacts.write crm.objects.contacts.read crm.schemas.contacts.read crm.schemas.contacts.write oauth")
-                    .queryParam("response_type", "code")
+                    .queryParam("scope", SCOPES)
+                    .queryParam("response_type", RESPONSE_TYPE)
                     .toUriString();
         } catch (Exception e) {
             log.error("Error generating OAuth URI", e);
@@ -50,7 +50,13 @@ public class AuthServiceImpl implements AuthService {
         log.info("Starting access token generation");
 
         try {
-            HubSpotTokenResponse response = client.getAccessToken(HUB_SPOT_CONTENT_TYPE, GRANT_TYPE, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, code);
+            HubSpotTokenResponse response = client.getAccessToken(
+                    HUB_SPOT_CONTENT_TYPE,
+                    GRANT_TYPE,
+                    CLIENT_ID,
+                    CLIENT_SECRET,
+                    REDIRECT_URI,
+                    code);
 
             return AuthTokenResponse.builder()
                     .refreshToken(response.getRefreshToken())

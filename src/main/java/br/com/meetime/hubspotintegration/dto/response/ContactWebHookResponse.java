@@ -8,6 +8,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class ContactWebHookResponse {
+
     private String appId;
     private String eventId;
     private String subscriptionId;

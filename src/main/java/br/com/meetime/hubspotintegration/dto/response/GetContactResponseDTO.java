@@ -8,5 +8,6 @@ import java.util.List;
 @Getter
 @Setter
 public class GetContactResponseDTO {
+
     private List<ContactResponse> results;
 }

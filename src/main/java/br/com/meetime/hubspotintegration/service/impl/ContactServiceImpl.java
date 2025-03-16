@@ -5,19 +5,28 @@ import br.com.meetime.hubspotintegration.dto.request.ContactRequest;
 import br.com.meetime.hubspotintegration.dto.response.ContactResponse;
 import br.com.meetime.hubspotintegration.dto.response.ContactWebHookResponse;
 import br.com.meetime.hubspotintegration.dto.response.GetContactResponseDTO;
+import br.com.meetime.hubspotintegration.exception.RateLimitException;
 import br.com.meetime.hubspotintegration.service.ContactService;
 import br.com.meetime.hubspotintegration.utils.SecretUtils;
 import feign.FeignException;
+import io.github.bucket4j.Bandwidth;
+import io.github.bucket4j.Bucket;
+import io.github.bucket4j.Bucket4j;
+import io.github.bucket4j.Refill;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static br.com.meetime.hubspotintegration.constant.BucketConstants.*;
+import static br.com.meetime.hubspotintegration.constant.WebSocketConstants.CREATED_CONTACTS_TOPIC;
 
 @Service
 @Slf4j
@@ -26,12 +35,19 @@ public class ContactServiceImpl implements ContactService {
 
     private final HubSpotClient client;
     private final SimpMessagingTemplate messagingTemplate;
+    private final Bucket bucket = Bucket.builder()
+            .addLimit(Bandwidth.simple(BUCKET_CAPACITY, BUCKET_DURATION))
+            .build();
 
     @Override
     public void create(String accessToken, ContactRequest contact) {
+        if (!bucket.tryConsume(TOKENS)) {
+            log.error("Could not create contact. Rate limit reached");
+            throw new RateLimitException("Rate limit reached. Wait before making the request.");
+        }
+
         LocalTime start = LocalTime.now();
         log.info("Starting contact creation");
-
         try {
             client.createContact(accessToken, Map.of("properties", contact));
         } catch (FeignException.Conflict e) {
@@ -50,9 +66,13 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public List<ContactResponse> find(String accessToken) {
+        if (!bucket.tryConsume(TOKENS)) {
+            log.error("Could not find contact. Rate limit reached.");
+            throw new RateLimitException("Rate limit reached. Wait before making the request.");
+        }
+
         LocalTime start = LocalTime.now();
         log.info("Starting contact find");
-
         try {
             GetContactResponseDTO response = client.findContact(accessToken);
             return response.getResults();
@@ -70,6 +90,7 @@ public class ContactServiceImpl implements ContactService {
     @Override
     public void processCreated(List<ContactWebHookResponse> response) {
         log.info("Processing created contacts: {}", response);
-        messagingTemplate.convertAndSend("/topic/contacts", response);
+        // processamento ficaria aqui...
+        messagingTemplate.convertAndSend(CREATED_CONTACTS_TOPIC, response);
     }
 }

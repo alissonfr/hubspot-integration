@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ContactResponse {
+
     private String id;
     private ContactRequest properties;
     private String updatedAt;

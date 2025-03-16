@@ -28,14 +28,15 @@ public class ContactController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<ContactResponse>> find(@RequestHeader("Authorization") String accessToken) {
-        return ResponseEntity.ok(service.find(accessToken));
-    }
-
     @PostMapping("/webhook")
     public ResponseEntity<String> handleWebhook(@RequestBody List<ContactWebHookResponse> response) {
         service.processCreated(response);
         return ResponseEntity.ok("Contact successfully processed");
+    }
+
+    // OPTIONAL: This endpoint is not required for the test
+    @GetMapping("/")
+    public ResponseEntity<List<ContactResponse>> find(@RequestHeader("Authorization") String accessToken) {
+        return ResponseEntity.ok(service.find(accessToken));
     }
 }

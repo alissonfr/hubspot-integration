@@ -1,4 +1,4 @@
-package br.com.meetime.hubspotintegration.exception.handler;
+package br.com.meetime.hubspotintegration.dto.response;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

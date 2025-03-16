@@ -28,12 +28,4 @@ public class AuthController {
     public ResponseEntity<AuthTokenResponse> callback(@RequestParam("code") String code) {
         return ResponseEntity.ok(service.getAccessToken(code));
     }
-
-    // EXTRA ROUTE: automatically redirect user to HubSpot OAuth page
-    @GetMapping("/oauth/authorize/login")
-    public ResponseEntity<String> login() {
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .header("Location", service.getOAuthUri())
-                .build();
-    }
 }

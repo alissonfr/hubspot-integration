@@ -1,6 +1,8 @@
 package br.com.meetime.hubspotintegration.exception.handler;
 
+import br.com.meetime.hubspotintegration.dto.response.RestHttpResponse;
 import br.com.meetime.hubspotintegration.exception.InvalidAuthCodeException;
+import br.com.meetime.hubspotintegration.exception.RateLimitException;
 import br.com.meetime.hubspotintegration.utils.SecretUtils;
 import feign.FeignException;
 import org.springframework.http.HttpStatus;
@@ -33,5 +35,11 @@ public class RestExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public RestHttpResponse handleInvalidAuthCodeException(InvalidAuthCodeException ex) {
         return new RestHttpResponse(HttpStatus.BAD_REQUEST, SecretUtils.hideSecret(ex.getMessage()));
+    }
+
+    @ExceptionHandler(RateLimitException.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public RestHttpResponse handleRateLimitException(RateLimitException ex) {
+        return new RestHttpResponse(HttpStatus.TOO_MANY_REQUESTS, SecretUtils.hideSecret(ex.getMessage()));
     }
 }
