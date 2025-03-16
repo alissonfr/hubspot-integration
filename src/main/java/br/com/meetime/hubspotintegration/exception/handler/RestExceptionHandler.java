@@ -17,6 +17,12 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(FeignException.Unauthorized.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public RestHttpResponse handleFeignExceptionUnauthorized(FeignException.Unauthorized ex) {
+        return new RestHttpResponse(HttpStatus.UNAUTHORIZED, SecretUtils.hideSecret(ex.getMessage()));
+    }
+
     @ExceptionHandler(FeignException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public RestHttpResponse handleFeignException(FeignException ex) {

@@ -33,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
             return UriComponentsBuilder.fromUriString(BASE_URL + OAUTH_PATH)
                     .queryParam("client_id", CLIENT_ID)
                     .queryParam("redirect_uri", REDIRECT_URI)
-                    .queryParam("scope", "crm.objects.contacts.write crm.objects.contacts.read oauth")
+                    .queryParam("scope", "crm.objects.contacts.write crm.objects.contacts.read crm.schemas.contacts.read crm.schemas.contacts.write oauth")
                     .queryParam("response_type", "code")
                     .toUriString();
         } catch (Exception e) {
