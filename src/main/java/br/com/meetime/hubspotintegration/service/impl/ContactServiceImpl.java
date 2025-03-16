@@ -70,6 +70,6 @@ public class ContactServiceImpl implements ContactService {
     @Override
     public void processCreated(List<ContactWebHookResponse> response) {
         log.info("Processing created contacts: {}", response);
-        messagingTemplate.convertAndSend("/topic/notifications", response);
+        messagingTemplate.convertAndSend("/topic/contacts", response);
     }
 }
