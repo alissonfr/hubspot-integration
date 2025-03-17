@@ -89,8 +89,22 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public void processCreated(List<ContactWebHookResponse> response) {
+        LocalTime start = LocalTime.now();
+        log.info("Starting contact processing");
+        try {
+
         log.info("Processing created contacts: {}", response);
         // processamento ficaria aqui...
         messagingTemplate.convertAndSend(CREATED_CONTACTS_TOPIC, response);
+
+        } catch (FeignException e) {
+            log.error("A FeignException occurred while processing contacts: {}", SecretUtils.hideSecret(e.getMessage()));
+            throw e;
+        } catch (Exception e) {
+            log.error("Error processing contacts", e);
+            throw e;
+        } finally {
+            log.info("Contacts processing took: {} ms", ChronoUnit.MILLIS.between(start, LocalTime.now()));
+        }
     }
 }
